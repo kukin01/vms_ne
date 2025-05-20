@@ -19,6 +19,7 @@ const createVehicle : any = async (req: AuthRequest, res: Response) => {
     if (existingVehicle) {
         return res.status(400).json({ message: "Vehicle with this plate number already exists" });
     }
+    const userId = req.user.id;
 
     try {
         const entryCar = await prisma.entry_car.create({
@@ -26,7 +27,7 @@ const createVehicle : any = async (req: AuthRequest, res: Response) => {
                 plateNumber: dto.plate_number,
                 parking_code: dto.parking_code,
                 entry_time: dto.entry_time,
-                userId: req.user.id,
+                userId: userId,
                 status: "PENDING",
                 charged_amount: dto.charged_amount,
                 exit_time: dto.exit_time,
@@ -84,6 +85,35 @@ const updateEntryCar = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Failed to update vehicle", error });
     }
 }
+const getAllEntryCars: any = async(req: Request, res: Response) => {
+    try{
+        const entryCars = await prisma.entry_car.findMany({
+            where: {
+                exit_time:  undefined 
+            },
+        });
+        if(!entryCars){
+            return res.status(404).json({ message: "No entry cars found" });
+        }
+        return res.status(200).json(entryCars);
+    } catch (error) {
+        return res.status(500).json({ message: "Failed to fetch entry cars", error });
+    }
+}
+
+const getExitCars: any = async(req: Request, res: Response) => {
+    try{
+        const exitCars = await prisma.entry_car.findMany({
+            where: { exit_time: { not: undefined } },
+        });
+        if(!exitCars){
+            return res.status(404).json({ message: "No exit cars found" });
+        }
+        return res.status(200).json(exitCars);
+    } catch (error) {
+        return res.status(500).json({ message: "Failed to fetch exit cars", error });
+    }
+}
 
 const getUserVehicles:any = async (req: AuthRequest , res: Response) => {
     try {
@@ -130,6 +160,8 @@ const vehicleController = {
     getVehicleById,
     updateEntryCar,
     deleteVehicle,
+    getAllEntryCars,
+    getExitCars,
 };
 
 export default vehicleController;

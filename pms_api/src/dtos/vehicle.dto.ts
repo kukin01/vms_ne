@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength, IsEnum, Min, IsInt, IsDate } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength, IsEnum, Min, IsInt, IsDate, IsDateString } from "class-validator";
 
 const RWANDA_PLATE_REGEX = /^RA[A-Z] \d{3}[A-Z]$/;
 
@@ -22,16 +22,18 @@ export class RegisterEntryVehicleDTO {
     parking_code: string;
 
     @IsString()
-    @IsNotEmpty()
-    user_id: string;
+    @IsOptional()
+    user_id?: string;
 
     @IsDate()
     @IsOptional()
+    @IsDateString()
     entry_time?: Date;
 
     @IsDate()
     @IsOptional()
-    exit_time?: Date;
+    @IsDateString()
+    exit_time?: Date | "";
 
     @IsInt()
     @IsOptional()
@@ -61,6 +63,7 @@ export class UpdateVehicleDTO {
 
     @IsDate()
     @IsOptional()
+    @IsDateString()
     entry_time?: Date;    
 
     @IsDate()

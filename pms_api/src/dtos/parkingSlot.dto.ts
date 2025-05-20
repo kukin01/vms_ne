@@ -1,8 +1,8 @@
-import { IsInt, IsBoolean, IsOptional, Min, IsString } from "class-validator";
+import { IsInt, IsBoolean, IsOptional, Min, IsString, IsNotEmpty } from "class-validator";
 
 export class CreateParkingSlotDto {
   @IsInt()
-  @Min(1)
+  @IsNotEmpty()
   parking_number: number;
 
   @IsInt()

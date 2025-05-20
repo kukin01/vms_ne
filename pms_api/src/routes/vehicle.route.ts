@@ -11,5 +11,6 @@ router.get("/getMyVehicles", checkLoggedIn, vehicleController.getUserVehicles);
 router.get("/:id", checkLoggedIn, vehicleController.getVehicleById);
 router.put("/:id", checkLoggedIn, validationMiddleware(UpdateVehicleDTO, true), vehicleController.updateEntryCar);
 router.delete("/:id", checkLoggedIn, vehicleController.deleteVehicle);
-
+router.get("/entry-cars", checkLoggedIn, vehicleController.getAllEntryCars);
+router.get("/exit-cars", checkLoggedIn, vehicleController.getExitCars);
 export default router;

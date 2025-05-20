@@ -127,6 +127,16 @@ const CreateEditSlot: React.FC<CreateEditSlotProps> = ({
             )}
           </div>
           <div>
+            <label className="block mb-1">Parking Number</label>
+            <Input
+              type="number"
+              {...register("slotNumber", { required: true, valueAsNumber: true })}
+            />
+            {errors.parking_number && (
+              <p className="text-red-600">Parking Number is required</p>
+            )}
+          </div>
+          <div>
             <label className="block mb-1">Available</label>
             <Select
               value={slotToEdit ? (slotToEdit.isAvailable ? "yes" : "no") : "yes"}
@@ -140,6 +150,25 @@ const CreateEditSlot: React.FC<CreateEditSlotProps> = ({
                 <SelectItem value="no">No</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+          <div>
+            <label className="block mb-1">Parking Name</label>
+            <Input
+              {...register("parking_name", { required: true })}
+            />
+          </div>
+          <div>
+            <label className="block mb-1">Location</label>
+            <Input
+              {...register("location", { required: true })}
+            />
+          </div>
+          <div>
+            <label className="block mb-1">Charging Fee per Hour</label>
+            <Input
+              type="number"
+              {...register("charging_fee_per_hour", { required: true, valueAsNumber: true })}
+            />
           </div>
           <DialogFooter>
             <Button type="submit" disabled={loading}>

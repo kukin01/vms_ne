@@ -18,6 +18,18 @@
     {
       "name": "Users",
       "description": "Users endpoints"
+    },
+    {
+      "name": "Vehicles",
+      "description": "Vehicles endpoints"
+    },
+    {
+      "name": "Parking Slots",
+      "description": "Parking slots endpoints"
+    },
+    {
+      "name": "Parking Requests",
+      "description": "Parking requests endpoints"
     }
   ],
   "paths": {
@@ -577,16 +589,64 @@
         "tags": [
           "Vehicles"
         ],
-        "description": "",
+        "description": "Create a new vehicle entry. The parking_code must be a valid parking slot ID.",
         "parameters": [
           {
             "name": "authorization",
             "in": "header",
             "schema": {
               "type": "string"
-            }
+            },
+            "required": true,
+            "description": "Bearer token"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "plate_number": {
+                    "type": "string",
+                    "example": "RAB 123A",
+                    "description": "Vehicle plate number (Rwanda format: RAB 123A)"
+                  },
+                  "parking_code": {
+                    "type": "string",
+                    "example": "a-valid-parking-slot-id",
+                    "description": "ID of the parking slot (must exist in parking_slots table)"
+                  },
+                  "entry_time": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2024-05-20T11:40:46.002Z",
+                    "description": "Entry time (optional, defaults to now)"
+                  },
+                  "exit_time": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2024-05-20T13:40:46.002Z",
+                    "description": "Exit time (optional)"
+                  },
+                  "charged_amount": {
+                    "type": "integer",
+                    "example": 0,
+                    "description": "Charged amount (optional)"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": ["PENDING", "APPROVED"],
+                    "example": "PENDING",
+                    "description": "Vehicle status (optional)"
+                  }
+                },
+                "required": ["plate_number", "parking_code"]
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "Created"
