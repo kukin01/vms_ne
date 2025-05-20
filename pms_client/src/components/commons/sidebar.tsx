@@ -49,7 +49,7 @@ const Sidebar: React.FC = () => {
   `}
 >
   <div className="mb-10 text-center">
-    <h1 className="font-extrabold text-2xl text-purple-700">Nyabihu Parking</h1>
+    <h1 className="font-extrabold text-2xl text-purple-700">XWZ LTD Parking</h1>
   </div>
 
   <nav className="flex flex-col gap-3">

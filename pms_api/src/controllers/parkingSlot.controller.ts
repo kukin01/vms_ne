@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import prisma from "../../prisma/prisma-client";
 import ServerResponse from "../utils/ServerResponse";
-
+import { plainToInstance } from "class-transformer";
+import { CreateParkingSlotDto } from "../dtos/parkingSlot.dto";
 
 //get all parking slots
 export const getAllParkingSlots = async (req: Request, res: Response) => {
@@ -50,6 +51,7 @@ export const getParkingSlotById = async (req: Request, res: Response) => {
 };
 
 export const createParkingSlot = async (req: Request, res: Response) => {
+  const dto = plainToInstance(CreateParkingSlotDto, req.body);
   try {
     const { slotNumber, isAvailable } = req.body;
     const existingSlot = await prisma.parkingSlot.findUnique({
@@ -63,8 +65,13 @@ export const createParkingSlot = async (req: Request, res: Response) => {
     //create new parking slot
     const newParkingSlot = await prisma.parkingSlot.create({
       data: {
-        slotNumber,
-        isAvailable: isAvailable !== undefined ? isAvailable : true,
+        parking_name: dto.parking_name,
+        slotNumber: dto.parking_number,
+        code: dto.code,
+        location: dto.location,
+        charging_fee_per_hour: dto.charging_fee_per_hour,
+        available_space: dto.available_space,
+        isAvailable: dto.isAvailable,
       },
     });
     return ServerResponse.created(res, "Parking slot created successfully", newParkingSlot);

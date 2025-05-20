@@ -25,6 +25,12 @@ interface CreateEditSlotProps {
   slotToEdit?: {
     id?: string;
     slotNumber: number;
+    parking_number: number;
+    code: number;
+    available_space: number;
+    location: string;
+    parking_name: string;
+    charging_fee_per_hour: number;
     isAvailable: boolean;
   } | null;
   onSuccess: () => void;
@@ -32,6 +38,12 @@ interface CreateEditSlotProps {
 
 interface SlotFormData {
   slotNumber: number;
+  parking_number: number;
+  code: number;
+  available_space: number;
+  location: string;
+  parking_name: string;
+  charging_fee_per_hour: number;
   isAvailable: "yes" | "no";
 }
 
@@ -54,6 +66,12 @@ const CreateEditSlot: React.FC<CreateEditSlotProps> = ({
     if (slotToEdit) {
       reset({
         slotNumber: slotToEdit.slotNumber,
+        parking_number: slotToEdit.parking_number,
+        code: slotToEdit.code,
+        available_space:slotToEdit.available_space,
+        location: slotToEdit.location,
+        parking_name: slotToEdit.parking_name,
+        charging_fee_per_hour: slotToEdit.charging_fee_per_hour,
         isAvailable: slotToEdit.isAvailable ? "yes" : "no",
       });
     } else {
@@ -68,6 +86,12 @@ const CreateEditSlot: React.FC<CreateEditSlotProps> = ({
     try {
       const finalData = {
         slotNumber: data.slotNumber,
+        parking_number: data.parking_number,
+        code: data.code,
+        available_space: data.available_space,
+        location: data.location,
+        parking_name: data.parking_name,
+        charging_fee_per_hour: data.charging_fee_per_hour,
         isAvailable: data.isAvailable === "yes",
       };
       if (slotToEdit) {

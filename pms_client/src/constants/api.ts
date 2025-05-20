@@ -13,6 +13,7 @@ export const API_ENDPOINTS = {
   user: {
     me: `${API_BASE_URL}/user/me`,
     all: `${API_BASE_URL}/user/all`,
+    availableParkingSlots: `${API_BASE_URL}/user/available-parking-slots`,
   },
   vehicle:{
     all: `${API_BASE_URL}/vehicles/getMyVehicles`,

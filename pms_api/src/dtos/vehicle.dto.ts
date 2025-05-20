@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength, IsEnum } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength, IsEnum, Min, IsInt, IsDate } from "class-validator";
 
 const RWANDA_PLATE_REGEX = /^RA[A-Z] \d{3}[A-Z]$/;
 
@@ -7,7 +7,7 @@ export enum VehicleStatus {
     APPROVED = "APPROVED",
 }
 
-export class CreateVehicleDTO {
+export class RegisterEntryVehicleDTO {
     @IsString()
     @MinLength(6)
     @MaxLength(10)
@@ -15,11 +15,31 @@ export class CreateVehicleDTO {
         message: 'Plate number must match Rwanda format: e.g. "RAB 123A".',
     })
     @IsNotEmpty()
-    plateNumber: string;
+    plate_number: string;
 
     @IsString()
     @IsNotEmpty()
-    color: string;
+    parking_code: string;
+
+    @IsString()
+    @IsNotEmpty()
+    user_id: string;
+
+    @IsDate()
+    @IsOptional()
+    entry_time?: Date;
+
+    @IsDate()
+    @IsOptional()
+    exit_time?: Date;
+
+    @IsInt()
+    @IsOptional()
+    charged_amount?: number;
+
+    @IsString()
+    @IsOptional()
+    status?: VehicleStatus;
 }
 
 export class UpdateVehicleDTO {
@@ -32,9 +52,24 @@ export class UpdateVehicleDTO {
     })
     plateNumber?: string;
 
-    @IsOptional()
+    @IsNotEmpty()
+    plate_number: string;
+
     @IsString()
-    color?: string;
+    @IsNotEmpty()
+    parking_code: string;
+
+    @IsDate()
+    @IsOptional()
+    entry_time?: Date;    
+
+    @IsDate()
+    @IsOptional()
+    exit_time?: Date;
+
+    @IsInt()
+    @IsOptional()
+    charged_amount?: number;
 
     @IsOptional()
     @IsEnum(VehicleStatus)

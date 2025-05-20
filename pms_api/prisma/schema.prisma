@@ -1,4 +1,4 @@
- generator client {
+generator client {
   provider = "prisma-client-js"
 }
 
@@ -9,7 +9,7 @@ datasource db {
 
 enum Role {
   ADMIN // The application admin
-  USER  // This is a compuser
+  USER // This is a compuser
 
   @@map("roles")
 }
@@ -61,51 +61,79 @@ model User {
   createdAt            DateTime            @default(now()) @map("created_at")
   updatedAt            DateTime            @updatedAt @map("updated_at")
 
-  vehicleRequests      ParkingRequest[]
-  vehicles             Vehicle[]
+  vehicleRequests ParkingRequest[]
+  Entry_car       Entry_car[]
+  Exit_car        Exit_car[]
 
   @@map("users")
 }
 
-model Vehicle {
-  id          String        @id @default(uuid())
-  plateNumber String        @unique @map("plate_number")
-  color       String
-  status      VehicleStatus @default(PENDING)
-  userId      String        @map("user_id")
-  user        User          @relation(fields: [userId], references: [id])
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
+model Entry_car {
+  id              String           @id @default(uuid())
+  plateNumber     String           @unique @map("plate_number")
+  parking_code    String           @map("code")
+  parking_lot     ParkingSlot      @relation(fields: [parking_code], references: [id])
+  status          VehicleStatus    @default(PENDING)
+  userId          String           @map("user_id")
+  user            User             @relation(fields: [userId], references: [id])
+  entry_time      DateTime         @default(now()) @map("entry_time")
+  exit_time       DateTime         @default(now()) @map("exit_time")
+  charged_amount  Int              @default(0) @map("charged_amount")
   vehicleRequests ParkingRequest[]
 
-  @@map("vehicles")
+  @@map("entry_cars")
+}
+
+model Exit_car {
+  id             String           @id @default(uuid())
+  plateNumber    String           @unique @map("plate_number")
+  parking_code   String           @map("code")
+  parking_lot    ParkingSlot      @relation(fields: [parking_code], references: [id])
+  status         VehicleStatus    @default(PENDING)
+  userId         String           @map("user_id")
+  user           User             @relation(fields: [userId], references: [id])
+  entry_time     DateTime         @default(now()) @map("entry_time")
+  exit_time      DateTime         @updatedAt @map("exit_time")
+  charged_amount Int              @map("charged_amount")
+  ParkingRequest ParkingRequest[]
+
+  @@map("exit_cars")
 }
 
 model ParkingSlot {
-  id          String   @id @default(uuid())
-  slotNumber  Int      @unique @map("slot_number")
-  isAvailable Boolean  @default(true) @map("is_available")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id                    String   @id @default(uuid())
+  code                  String   @unique @map("code")
+  parking_name          String   @unique @map("parking_name")
+  slotNumber            Int      @unique @map("slot_number")
+  location              String   @map("location")
+  isAvailable           Boolean  @default(true) @map("is_available")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+  charging_fee_per_hour Int      @unique @map("charging_fee_per_hour")
+  available_space       Int      @map("spaces")
 
   parkingRequests ParkingRequest[]
+  entry_cars      Entry_car[]
+  exit_cars       Exit_car[]
 
   @@map("parking_slots")
 }
 
 model ParkingRequest {
-  id             String        @id @default(uuid())
-  userId         String        @map("user_id")
-  vehicleId      String        @map("vehicle_id")
-  parkingSlotId  String?       @map("parking_slot_id")
-  checkIn        DateTime      @default(now())@map("check_in")
-  checkOut       DateTime      @map("check_out")
-  status         RequestStatus @default(PENDING)
-  requestedAt    DateTime      @default(now()) @map("requested_at")
-  approvedAt     DateTime?     @map("approved_at")
-  user           User          @relation(fields: [userId], references: [id])
-  vehicle        Vehicle       @relation(fields: [vehicleId], references: [id])
-  parkingSlot    ParkingSlot?  @relation(fields: [parkingSlotId], references: [id])
+  id            String        @id @default(uuid())
+  userId        String        @map("user_id")
+  carId         String        @map("car_id")
+  parkingSlotId String        @map("parking_slot_id")
+  checkIn       DateTime      @default(now()) @map("check_in")
+  checkOut      DateTime      @default(now()) @map("check_out")
+  status        RequestStatus @default(PENDING)
+  requestedAt   DateTime      @default(now()) @map("requested_at")
+  approvedAt    DateTime?     @map("approved_at")
+  user          User          @relation(fields: [userId], references: [id])
+  Entry_car     Entry_car     @relation(fields: [carId], references: [id])
+  parkingSlot   ParkingSlot   @relation(fields: [parkingSlotId], references: [id])
+  Exit_car      Exit_car?     @relation(fields: [exit_carId], references: [id])
+  exit_carId    String?
 
   @@map("parking_requests")
 }

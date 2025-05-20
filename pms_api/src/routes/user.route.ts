@@ -26,6 +26,7 @@ userRouter.get("/all", checkLoggedIn, userController.all);
 userRouter.get("/:id", [], userController.getById);
 userRouter.get("/search/:query", [], userController.searchUser);
 userRouter.delete("/me", [checkLoggedIn], userController.deleteUser);
+userRouter.get("/available-parking-slots", [checkLoggedIn], userController.getAvailableParkingSlots); 
 userRouter.delete(
   "/remove-avatar",
   [checkLoggedIn],

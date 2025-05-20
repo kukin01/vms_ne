@@ -18,14 +18,24 @@ interface CreateEditVehicleProps {
   vehicleToEdit?: {
     id?: string;
     plateNumber: string;
-    color: string;
+    status?: string;
+    userId?: string;
+    entry_time?: Date;
+    exit_time?: Date;
+    charged_amount?: number;
+    parking_code?: string;
   } | null;
   onSuccess: () => void;
 }
 
 interface VehicleFormData {
   plateNumber: string;
-  color: string;
+  status: string;
+  userId: string;
+  entry_time: Date;
+  exit_time: Date;
+  charged_amount: number;
+  parking_code: string;
 }
 
 const CreateEditVehicle: React.FC<CreateEditVehicleProps> = ({
@@ -46,7 +56,12 @@ const CreateEditVehicle: React.FC<CreateEditVehicleProps> = ({
     if (vehicleToEdit) {
       reset({
         plateNumber: vehicleToEdit.plateNumber,
-        color: vehicleToEdit.color,
+        status: vehicleToEdit.status,
+        userId: vehicleToEdit.userId,
+        entry_time: vehicleToEdit.entry_time,
+        exit_time: vehicleToEdit.exit_time,
+        charged_amount: vehicleToEdit.charged_amount,
+        parking_code: vehicleToEdit.parking_code,
       });
     } else {
       reset({});
@@ -90,10 +105,35 @@ const CreateEditVehicle: React.FC<CreateEditVehicleProps> = ({
             )}
           </div>
           <div>
-            <label className="block mb-1">Color</label>
-            <Input {...register("color", { required: true })} />
-            {errors.color && <p className="text-red-600">Color is required</p>}
+            <label className="block mb-1">Status</label>
+            <Input {...register("status", { required: true })} />
+            {errors.status && <p className="text-red-600">Status is required</p>}
           </div>
+          <div>
+            <label className="block mb-1">User ID</label>
+            <Input {...register("userId", { required: true })} />
+            {errors.userId && <p className="text-red-600">User ID is required</p>}
+          </div>
+          <div>
+            <label className="block mb-1">Entry Time</label>
+            <Input {...register("entry_time", { required: true })} />
+            {errors.entry_time && <p className="text-red-600">Entry Time is required</p>}
+          </div>
+          <div>
+            <label className="block mb-1">Exit Time</label>
+            <Input {...register("exit_time", { required: true })} />
+            {errors.exit_time && <p className="text-red-600">Exit Time is required</p>}
+          </div>
+          <div>
+            <label className="block mb-1">Charged Amount</label>
+            <Input {...register("charged_amount", { required: true })} />
+            {errors.charged_amount && <p className="text-red-600">Charged Amount is required</p>}
+          </div>
+          <div>
+            <label className="block mb-1">Parking Code</label>
+            <Input {...register("parking_code", { required: true })} />
+            {errors.parking_code && <p className="text-red-600">Parking Code is required</p>}
+          </div>                    
           <DialogFooter>
             <Button type="submit" disabled={loading}>
               {loading ? "Saving..." : "Save"}

@@ -1,7 +1,7 @@
 import axios from "axios";
 import API_ENDPOINTS from "../constants/api";
 import { toast } from "sonner";
-import { Vehicle } from "@/components/tables/columns";
+import { EntryCar } from "@/components/tables/columns";
 
 export async function getAllVehicles() {
   try {
@@ -22,7 +22,7 @@ export async function getAllVehicles() {
   }
 }
 
-export async function createVehicle(vehicleData: Vehicle) {
+export async function createVehicle(vehicleData: EntryCar) {
   try {
     const response = await axios.post(API_ENDPOINTS.vehicle.create, vehicleData, {
       headers: {

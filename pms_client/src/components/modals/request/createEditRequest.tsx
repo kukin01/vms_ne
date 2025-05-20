@@ -26,6 +26,10 @@ interface CreateEditRequestProps {
   requestToEdit?: {
     id?: string;
     vehicleId: string;
+    parkingSlotId: string;
+    car_plate_number: string;
+    status: string;
+    userId: string;
     checkIn: string;
     checkOut: string;
   } | null;
@@ -34,6 +38,10 @@ interface CreateEditRequestProps {
 
 interface RequestFormData {
   vehicleId: string;
+  parkingSlotId: string;
+  car_plate_number: string;
+  status: string;
+  userId: string;
   checkIn: string;
   checkOut: string;
 }
@@ -71,6 +79,10 @@ const CreateEditRequest: React.FC<CreateEditRequestProps> = ({
     if (requestToEdit) {
       reset({
         vehicleId: requestToEdit.vehicleId,
+        parkingSlotId: requestToEdit.parkingSlotId,
+        car_plate_number: requestToEdit.car_plate_number,
+        status: requestToEdit.status,
+        userId: requestToEdit.userId,
         checkIn: requestToEdit.checkIn.slice(0, 16), // format for datetime-local input
         checkOut: requestToEdit.checkOut.slice(0, 16),
       });
@@ -87,6 +99,9 @@ const CreateEditRequest: React.FC<CreateEditRequestProps> = ({
       const payload = {
         userId,
         vehicleId: data.vehicleId,
+        parkingSlotId: data.parkingSlotId,
+        car_plate_number: data.car_plate_number,
+        status: data.status,
         checkIn: new Date(data.checkIn).toISOString(),
         checkOut: new Date(data.checkOut).toISOString(),
       };
@@ -161,6 +176,22 @@ const CreateEditRequest: React.FC<CreateEditRequestProps> = ({
             {errors.checkOut && (
               <p className="text-red-600">Check Out time is required</p>
             )}
+          </div>
+          <div>
+            <label className="block mb-1">Parking Slot</label>
+            <Input
+              type="datetime-local"
+              {...register("parkingSlotId", { required: true })}
+            />
+            {errors.parkingSlotId && (
+              <p className="text-red-600">Parking Slot is required</p>
+            )}
+          </div>
+          <div>
+            <label className="block mb-1">Car Plate Number</label>
+            <Input
+              {...register("car_plate_number", { required: true })}
+            />
           </div>
           <DialogFooter>
             <Button type="submit" disabled={loading}>

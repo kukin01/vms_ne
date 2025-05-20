@@ -9,12 +9,23 @@ export interface Users {
   telephone: string;
 }
 
-export interface Vehicle {
+export interface EntryCar {
   id?: string;
   plateNumber: string;
-  color: string;
+  parking_code: string;
   status?: string;
   userId?: string;
+  entry_time?: Date;
+  exit_time?: Date;
+  charged_amount?: number;
+}
+ 
+export interface AvailableParkingSlots {
+  id?: string;
+  slotNumber: number;
+  isAvailable: boolean;
+  charging_fee_per_hour: number;
+  parking_name: string;
 }
 
 export interface Requests {
@@ -24,12 +35,18 @@ export interface Requests {
   parkingSlotId?: string;
   checkIn?: string;
   checkOut?: string;
+  status?: string;
+  car_plate_number?: string;
 }
 
 export interface Slots {
   id?: string;
   slotNumber: number;
   isAvailable: boolean;
+  charging_fee_per_hour: number;
+  parking_name: string;
+  location: string;
+  available_space: number;
 }
 
 //user columns 
@@ -57,14 +74,38 @@ export const userColumns = (): ColumnDef<Users>[] => [
 ];
 
 // VEHICLE COLUMNS
-export const vehicleColumns = (): ColumnDef<Vehicle>[] => [
+export const vehicleColumns = (): ColumnDef<EntryCar>[] => [
   {
     accessorKey: "plateNumber",
     header: "Plate Number",
   },
   {
-    accessorKey: "color",
-    header: "Color",
+    accessorKey: "parking_code",
+    header: "Parking Code",
+  },
+  {
+    accessorKey: "entry_time",
+    header: "Entry Time",
+  },
+  {
+    accessorKey: "exit_time",
+    header: "Exit Time",
+  },
+  {
+    accessorKey: "charged_amount",
+    header: "Charged Amount",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+  },
+  {
+    accessorKey: "userId",
+    header: "User ID",
+  },
+  {
+    accessorKey: "parkingSlotId",
+    header: "Parking Slot ID",
   },
 ];
 
@@ -99,6 +140,16 @@ export const requestColumns = (): ColumnDef<Requests>[] => [
       const date = new Date(value);
       return date.toLocaleString();
     },
+  },
+  {
+    accessorKey: "car_plate_number",
+    header: "Car Plate Number",
+    cell: (info) => info.getValue() || "Not yet assigned",
+  },
+  {
+    accessorKey: "parkingSlot.slotNumber",
+    header: "Parking Slot",
+    cell: (info) => info.getValue() || "Not yet assigned",
   },
   {
     accessorKey: "requestedAt",
@@ -137,6 +188,40 @@ export const requestColumns = (): ColumnDef<Requests>[] => [
   },
 ];
 
+//AVAILABLE PARKING SLOTS COLUMNS
+export const availableParkingSlotsColumns = (): ColumnDef<AvailableParkingSlots>[] => [
+  {
+    accessorKey: "slotNumber",
+    header: "Slot Number",
+  },
+  {
+    accessorKey: "parking_name",
+    header: "Parking Name",
+  },
+  {
+    accessorKey: "location",
+    header: "Location",
+  },
+  {
+    accessorKey: "available_space",
+    header: "Available Space",
+  },
+  {
+    accessorKey: "charging_fee_per_hour",
+    header: "Charging Fee per Hour",
+  },
+  {
+    accessorKey: "isAvailable",
+    header: "Available",
+    cell: (info) =>
+      info.getValue() ? (
+        <span className="text-green-600 font-medium">Yes</span>
+      ) : (
+        <span className="text-red-600 font-medium">No</span>
+      ),
+  },
+];
+
 // SLOT COLUMNS
 export const slotColumns = (): ColumnDef<Slots>[] => [
   {
@@ -152,5 +237,21 @@ export const slotColumns = (): ColumnDef<Slots>[] => [
       ) : (
         <span className="text-red-600 font-medium">No</span>
       ),
+  },
+  {
+    accessorKey: "charging_fee_per_hour",
+    header: "Charging Fee per Hour",
+  },
+  {
+    accessorKey: "parking_name",
+    header: "Parking Name",
+  },
+  {
+    accessorKey: "location",
+    header: "Location",
+  },
+  {
+    accessorKey: "available_space",
+    header: "Available Space",
   },
 ];

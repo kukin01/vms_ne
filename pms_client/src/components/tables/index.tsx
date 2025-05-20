@@ -18,7 +18,7 @@ interface TableProps<T> {
   onApprove?: (id: string) => void;
   onReject?: (id: string) => void;
   role?: "admin" | "user";
-  tableType?: "vehicle" | "slots" | "requests" | "users";
+  tableType?: "entry_car" | "parking_slot" | "parking_request" | "users";
 }
 
 function DataTable<T>({
@@ -119,7 +119,7 @@ function DataTable<T>({
                 <td className="px-5 py-4 relative">
                   {/* ADMIN + REQUESTS → Approve / Reject */}
                   {role === "admin" &&
-                  tableType === "requests" &&
+                  tableType === "parking_request" &&
                   (row.original as any)?.status === "PENDING" ? (
                     <div className="flex gap-2">
                       <button
@@ -140,10 +140,10 @@ function DataTable<T>({
                   ) : (
                     // USER + REQUESTS or VEHICLE → Edit/Delete Dropdown
                     ((role === "user" &&
-                      (tableType === "requests" || tableType === "vehicle")) ||
+                      (tableType === "parking_request" || tableType === "entry_car")) ||
                       (role === "admin" &&
-                        (tableType === "vehicle" ||
-                          tableType === "slots"))) && (
+                        (tableType === "entry_car" ||
+                          tableType === "parking_slot"))) && (
                       <>
                         <button
                           onClick={() => {

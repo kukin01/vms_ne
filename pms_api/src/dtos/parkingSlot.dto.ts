@@ -1,9 +1,28 @@
-import { IsInt, IsBoolean, IsOptional, Min } from "class-validator";
+import { IsInt, IsBoolean, IsOptional, Min, IsString } from "class-validator";
 
 export class CreateParkingSlotDto {
   @IsInt()
   @Min(1)
-  slotNumber: number;
+  parking_number: number;
+
+  @IsInt()
+  @Min(1)
+  code: string;
+
+  @IsInt()
+  @Min(1)
+  available_space:number;
+
+  @IsString()
+  location: string;
+
+  @IsString()
+  @IsOptional()
+  parking_name: string;
+
+  @IsInt()
+  @Min(1)
+  charging_fee_per_hour: number;
 
   @IsBoolean()
   @IsOptional()
@@ -20,3 +39,5 @@ export class UpdateParkingSlotDto {
   @IsOptional()
   isAvailable?: boolean;
 }
+
+

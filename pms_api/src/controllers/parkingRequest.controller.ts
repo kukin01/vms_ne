@@ -14,10 +14,10 @@ const createParkingRequest = async (req: Request, res: Response) => {
 
     try {
         // Check if vehicle belongs to user
-        const vehicle = await prisma.vehicle.findUnique({
-            where: { id: dto.vehicleId },
+        const entry_car = await prisma.entry_car.findUnique({
+            where: { id: dto.carId },
         });
-        if (!vehicle || vehicle.userId !== (req as any).user.id) {
+        if (!entry_car || entry_car.userId !== (req as any).user.id) {
             return res.status(403).json({ message: "Unauthorized vehicle" });
         }
 
@@ -25,7 +25,8 @@ const createParkingRequest = async (req: Request, res: Response) => {
         const parkingRequest = await prisma.parkingRequest.create({
             data: {
                 userId: (req as any).user.id,
-                vehicleId: dto.vehicleId,
+                parkingSlotId: dto.parkingSlotId,
+                carId: dto.carId,
                 checkIn: new Date(dto.checkIn),
                 checkOut: new Date(dto.checkOut),
                 status: "PENDING",
@@ -42,7 +43,7 @@ const getUserParkingRequests = async (req: Request, res: Response) => {
     try {
         const requests = await prisma.parkingRequest.findMany({
             where: { userId: (req as any).user.id },
-            include: { parkingSlot: true, vehicle: true },
+                include: { parkingSlot: true, Entry_car: true },
         });
         return res.status(200).json(requests);
     } catch (error) {
@@ -53,7 +54,7 @@ const getUserParkingRequests = async (req: Request, res: Response) => {
 const getAllParkingRequests = async (req: Request, res: Response) => {
     try {
         const requests = await prisma.parkingRequest.findMany({
-            include: { parkingSlot: true, vehicle: true, user: true },
+            include: { parkingSlot: true, Entry_car: true, user: true },
         });
         return res.status(200).json(requests);
     } catch (error) {
@@ -66,7 +67,7 @@ const approveParkingRequest = async (req: Request, res: Response) => {
     try {
         const request = await prisma.parkingRequest.findUnique({
             where: { id },
-            include: { parkingSlot: true },
+            include: { parkingSlot: true, Entry_car: true },
         });
         if (!request) {
             return res.status(404).json({ message: "Request not found" });
@@ -83,6 +84,21 @@ const approveParkingRequest = async (req: Request, res: Response) => {
             return res.status(400).json({ message: "No available parking slots" });
         }
 
+        // Calculate charged amount based on time difference
+        const entryTime = request.Entry_car.entry_time;
+        const currentTime = new Date();
+        const hoursDiff = (currentTime.getTime() - entryTime.getTime()) / (1000 * 60 * 60);
+        const chargedAmount = Math.ceil(hoursDiff * availableSlot.charging_fee_per_hour);
+
+        // Update the entry car with the charged amount
+        await prisma.entry_car.update({
+            where: { id: req.body.car_Id },
+            data: {
+                charged_amount: chargedAmount,
+                exit_time: currentTime
+            }
+        });
+
         // Update request status and assign slot
         await prisma.parkingRequest.update({
             where: { id },
@@ -98,17 +114,25 @@ const approveParkingRequest = async (req: Request, res: Response) => {
             where: { id: request.userId },
         });
         if (user) {
-            await sendParkingSlotConfirmationEmail(user.email,user.names, availableSlot.slotNumber);
+            await sendParkingSlotConfirmationEmail(
+                user.email,
+                user.names, 
+                availableSlot.slotNumber, 
+                chargedAmount
+            );
         }
-    
 
         // Mark slot as unavailable
         await prisma.parkingSlot.update({
             where: { id: availableSlot.id },
-            data: { isAvailable: false },
+            data: { isAvailable: false, available_space:availableSlot.available_space - 1 },
         });
 
-        return res.status(200).json({ message: "Request approved", slotNumber: availableSlot.slotNumber });
+        return res.status(200).json({ 
+            message: "Request approved", 
+            slotNumber: availableSlot.slotNumber,
+            chargedAmount: chargedAmount 
+        });
     } catch (error) {
         return res.status(500).json({ message: "Error approving request", error });
     }

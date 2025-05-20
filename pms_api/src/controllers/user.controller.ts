@@ -51,6 +51,28 @@ const createUser = async (req: Request, res: Response) => {
   }
 };
 
+const getAvailableParkingSlots: any = async (req: Request, res: Response) => {
+  try {
+    const parkingSlots = await prisma.parkingSlot.findMany({
+      where: { 
+        isAvailable: true,
+        available_space: { gt: 0 } // Only show slots with available space
+      },
+      select: {
+        id: true,
+        code: true,
+        parking_name: true,
+        location: true,
+        available_space: true,
+        charging_fee_per_hour: true,
+        isAvailable: true
+      }
+    });
+    return ServerResponse.success(res, "Available parking slots fetched successfully", { parkingSlots });
+  } catch (error) {
+    return ServerResponse.error(res, "Error occurred while fetching parking slots", { error });
+  }
+}
 
 //update user
 const updateUser: any = async (req: AuthRequest, res: Response) => {
@@ -207,6 +229,7 @@ const userController = {
   deleteById,
   updateAvatar,
   updatePassword,
+  getAvailableParkingSlots
 };
 
 export default userController;

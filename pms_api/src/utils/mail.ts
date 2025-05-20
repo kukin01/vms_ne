@@ -110,7 +110,7 @@ const sendRejectionEmail = async (email: string, names: string) => {
     return { message: "Unable to send rejection email", status: false };
   }
 };
-const sendParkingSlotConfirmationEmail = async (email: string, names: string, slotNumber: any) => {
+const sendParkingSlotConfirmationEmail = async (email: string, names: string, slotNumber: any, charged_amount: number) => {
   try {
     await transporter.sendMail({
       from: process.env.MAIL_USER,
@@ -123,6 +123,7 @@ const sendParkingSlotConfirmationEmail = async (email: string, names: string, sl
               <h2>Dear ${names},</h2>
               <p>We are pleased to confirm your parking slot reservation.</p>
               <p>Your assigned parking slot number is: <strong>${slotNumber}</strong></p>
+              <p>The amount to be charged is: <strong>${charged_amount}</strong></p>
               <p>Thank you for choosing our service!</p>
               <br/>
               <p>Best regards,<br/>NE Parking Management Team</p>
